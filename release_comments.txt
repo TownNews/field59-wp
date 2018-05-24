@@ -1,0 +1,11 @@
+This file should be updated with the release notes for the platform. If there is both an appliance and
+hosted build of this package and each environment has different release notes, then instead of using
+this file create these two files:
+
+release_comments.hosted.txt
+release_comments.appliance.txt
+
+and provide the platform-specific release notes in each. Release notes should cover:
+
+- High-level overview of what the release is providing
+- Migrations that should be run after release
