@@ -122,8 +122,8 @@ activities for this application.
 %{__mkdir_p} %{buildroot}%{_libdir}/php
 %{__cp} -r lib/* %{buildroot}%{_libdir}/php
 
-%{__mkdir_p} %{buildroot}%{_datadir}
-%{__cp} -r share/* %{buildroot}%{_datadir}
+%{__mkdir_p} %{buildroot}%{_datadir}/tncms
+%{__cp} -r share/* %{buildroot}%{_datadir}/tncms
 
 %changelog
 %townnews_package_changelog EXAMPLE
