@@ -5,14 +5,6 @@
 # as the package format. RPMs are deployed to the various nodes in the
 # platform to handle the various components of the system.
 
-# This directive forces all references to _libdir to not care about
-# the standard lib64 location for 64-bit packages. Since most development
-# projects are PHP and are effectively noarch.
-
-%ifarch x86_64
-%define _libdir /usr/local/lib
-%endif
-
 # Enables use of the internal automatic dependency system
 # that is a part of Townnews Package. Helps cover adding
 # some dependencies that would otherwise be flagged by
@@ -23,8 +15,8 @@
 
 Summary: Example Application
 Name: example
-Version: %{townnews_package_version}
-Release: 1%{?dist}
+Version: %townnews_package_version
+Release: %townnews_package_release
 License: Commercial
 Vendor: TownNews.com
 Packager: John Doe <jdoe@example.com>
@@ -33,6 +25,7 @@ Group: Applications/WWW
 BuildArch: noarch
 BuildRoot: %{_tmppath}/%{name}-%{version}-build
 BuildRequires: townnews-package
+BuildRequires: php-devel
 %description
 A description of what this project provides. Usually a base
 package includes libraries needed on all systems that use
@@ -40,7 +33,7 @@ this module.
 
 %files
 %defattr(0644,root,root,0755)
-%{_libdir}/php/%{name}
+%{php_libdir}/%{name}
 
 ### Example Manager Package
 
@@ -120,7 +113,7 @@ activities for this application.
 %{__cp} -r bin/* %{buildroot}%{_bindir}
 
 %{__mkdir_p} %{buildroot}%{_libdir}/php
-%{__cp} -r lib/* %{buildroot}%{_libdir}/php
+%{__cp} -r lib/* %{buildroot}%{php_libdir}
 
 %{__mkdir_p} %{buildroot}%{_datadir}
 %{__cp} -r share/* %{buildroot}%{_datadir}
