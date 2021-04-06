@@ -11,7 +11,7 @@ if ( ! class_exists( 'Field59_Video_Admin' ) ) :
 	/**
 	 * Field59 Video admin functionality.
 	 */
-	class Field59_Video_Admin {
+	class Field59_Video_Admin extends Field59_Video_Authentication {
 
 		const DEFAULT_RESULTS_PER_PAGE = 25;
 
@@ -142,21 +142,18 @@ if ( ! class_exists( 'Field59_Video_Admin' ) ) :
 		 *
 		 * @return void
 		 */
-		public static function add_config_menu_item() {
-			if (
-				function_exists( 'acf_add_options_sub_page' )
-				&& defined( 'GTX_INTERNAL_CONFIG_PAGE_SLUG' )
-				&& defined( 'GTX_INTERNAL_CONFIG_CAPABILITY' )
-				) {
-				// Adds UPP Settings sub page.
-				acf_add_options_sub_page(
-					array(
-						'page_title'  => 'Field59 Video Settings',
-						'menu_title'  => 'Field59 Video',
-						'parent_slug' => GTX_INTERNAL_CONFIG_PAGE_SLUG,
-						'capability'  => GTX_INTERNAL_CONFIG_CAPABILITY,
-					)
-				);
+		public static function add_config_menu_item(){
+			if( function_exists('acf_add_options_sub_page')
+				&& defined ('FIELD59_VIDEO_SETTINGS_SLUG')
+			){
+				acf_add_options_sub_page(array(
+
+					'page_title'  => 'Field59 Video Settings',
+					'menu_title' => 'Field59 Video',
+					'menu_slug'	=> FIELD59_VIDEO_SETTINGS_SLUG,
+					'parent_slug' => 'options-general.php',
+					'capability'  => 'administrator',
+				));	
 			}
 		}
 
@@ -223,51 +220,6 @@ if ( ! class_exists( 'Field59_Video_Admin' ) ) :
 			$GLOBALS['body_id'] = 'field59-video-media-library';
 			wp_iframe( array( __CLASS__, 'field59_draw_media_video_page' ) );
 		}
-
-		/**
-		 * Constructs and makes a call to the Field59 API.
-		 *
-		 * @param string $url          Absolute URL of the API endpoint we are hitting.
-		 * @param string $method       What request method to use GET|POST|HEAD etc.
-		 * @param array  $params       List of parameters to pass to the API endpoint.
-		 * @param string $body         The body content of the request.
-		 * @param array  $adtl_headers Associative array of additional headers to pass with the request.
-		 * @return array|WP_Error
-		 */
-		protected static function make_field59_call( $url, $method = 'GET', $params = array(), $body = '', $adtl_headers = array() ) {
-			global $wp_version;
-
-			$f59_user = get_field( 'field59_video_username', 'option' );
-			$f59_pass = get_field( 'field59_video_password', 'option' );
-
-			$headers = array(
-				'Authorization' => 'Basic ' . base64_encode( $f59_user . ':' . $f59_pass ),
-				'user-agent'  => 'WordPress/' . $wp_version . '; ' . home_url(),
-			);
-			// Merge additional headers if applicible.
-			if ( ! empty( $adtl_headers ) ) {
-				$headers = array_unique( array_merge( $headers, $adtl_headers ) );
-			}
-
-			$request = array(
-				'headers' => $headers,
-				'method'  => $method,
-				'body'    => $body,
-			);
-
-			if ( 'GET' === $method && ! empty( $params ) && is_array( $params ) ) {
-				$url = add_query_arg( $params, $url );
-			} elseif (
-				empty( $response['body'] )
-				&& ! empty( $params )
-			) {
-				$request['body'] = wp_json_encode( $params );
-			}
-			$response = wp_remote_request( $url, $request );
-
-			return $response;
-		}
-
 		/**
 		 * Returns HTML to display a table row for the supplied video.
 		 *
