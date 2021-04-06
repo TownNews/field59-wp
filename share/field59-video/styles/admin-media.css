@@ -1,0 +1,61 @@
+body#field59-video-media-library .content {
+  padding: 16px; }
+  body#field59-video-media-library .content .subtitle {
+    padding-left: 0; }
+body#field59-video-media-library #field59-video-filter .search-box .spinner {
+  float: left; }
+body#field59-video-media-library table.field59-videos.fixed .column-length,
+body#field59-video-media-library table.field59-videos.fixed .column-date {
+  width: 10%; }
+body#field59-video-media-library table.field59-videos.fixed .column-category,
+body#field59-video-media-library table.field59-videos.fixed .column-keywords {
+  width: 15%; }
+body#field59-video-media-library table.field59-videos img.field59_video_thumbnail {
+  float: left;
+  margin-right: 16px;
+  max-width: 143px; }
+  body#field59-video-media-library table.field59-videos img.field59_video_thumbnail.no-thumb {
+    min-width: 143px;
+    min-height: 80px;
+    background-color: #ccc; }
+body#field59-video-media-library table.field59-videos .column-category {
+  text-transform: capitalize; }
+body#field59-video-media-library table.field59-videos .video-description p {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; }
+body#field59-video-media-library table.field59-videos .inline-embed-open .row-actions {
+  display: none; }
+body#field59-video-media-library table.field59-videos .inline-edit-row .inline-embed-col {
+  width: 100%;
+  padding-left: 162px; }
+body#field59-video-media-library table.field59-videos .inline-edit-row fieldset .inline-edit-group label.alignleft:first-child {
+  margin-right: 1em; }
+body#field59-video-media-library table.field59-videos .inline-edit-row .inline-embed-finish .button.save {
+  margin-left: 156px; }
+body#field59-video-media-library table.field59-videos .inline-edit-row .inline-embed-finish .spinner {
+  float: left; }
+body#field59-video-media-library .f59-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end; }
+  body#field59-video-media-library .f59-header .f59-type button {
+    border: none;
+    border-radius: 0;
+    padding: 0.825rem 0.725rem;
+    background-color: #dfdfdf;
+    transition: all 0.26s linear; }
+    body#field59-video-media-library .f59-header .f59-type button.active {
+      background-color: #1d6734;
+      color: white;
+      box-shadow: inset 1px 1px 8px #18572c; }
+    body#field59-video-media-library .f59-header .f59-type button:hover {
+      cursor: pointer;
+      background-color: #1b5f30; }
+    body#field59-video-media-library .f59-header .f59-type button:active, body#field59-video-media-library .f59-header .f59-type button:visited {
+      border: none;
+      border-radius: 0px; }
+  body#field59-video-media-library .f59-header .f59-type #video {
+    margin-right: -4px; }
+
+/*# sourceMappingURL=admin-media.css.map */

@@ -1,0 +1,121 @@
+// Styles for media upload iframe.
+body#field59-video-media-library {
+	.content {
+		padding: 16px;
+
+		.subtitle {
+			padding-left: 0;
+		}
+	}
+
+	#field59-video-filter {
+		.search-box {
+			.spinner {
+				float: left;
+			}
+		}
+	}
+
+	table.field59-videos {
+		&.fixed {
+			.column-length,
+			.column-date {
+				width: 10%;
+			}
+			.column-category,
+			.column-keywords {
+				width: 15%;
+			}
+		}
+
+		img.field59_video_thumbnail {
+			float: left;
+			margin-right: 16px;
+			max-width: 143px;
+
+			&.no-thumb {
+				min-width: 143px;
+				min-height: 80px;
+				background-color: #ccc;
+			}
+		}
+
+		.column-category {
+			text-transform: capitalize;
+		}
+
+		.video-description p {
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
+		.inline-embed-open {
+			.row-actions {
+				display: none;
+			}
+		}
+
+		.inline-edit-row {
+			.inline-embed-col {
+				width: 100%;
+				padding-left: 162px;
+			}
+			fieldset .inline-edit-group label.alignleft:first-child {
+				margin-right: 1em;
+			}
+
+			.inline-embed-finish {
+				.button.save {
+					margin-left: 156px;
+				}
+				.spinner {
+					float: left;
+				}
+			}
+		}
+	}
+
+	// F59 Iframe header
+	.f59-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-end;
+
+		.f59-type {
+			button {
+				border: none;
+				border-radius: 0;
+				padding: 0.825rem 0.725rem;
+				background-color: #dfdfdf;
+				transition: all 0.26s linear;
+
+				&.active {
+					background-color: #1d6734;
+					color: white;
+					box-shadow: inset 1px 1px 8px #18572c;
+				}
+
+				&:focus {
+					// box-shadow: 0 0 1px dodgerblue;
+					// border: 1px solid dodgerblue;
+					// border-radius: 0;
+				}
+
+				&:hover {
+					cursor: pointer;
+					background-color: #1b5f30;
+				}
+
+				&:active, &:visited {
+					border: none;
+					border-radius: 0px;
+				}
+			}
+
+			#video {
+				margin-right: -4px;
+			}
+		}
+	}
+}
