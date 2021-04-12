@@ -1,0 +1,19 @@
+{
+    "name": "field59/field59-video",
+    "description": "Add Field59 videos to your posts and passes WordPress categories back to Field59 as tags for videos embedded into posts.",
+    "type": "project",
+    "license": "GPL",
+    "authors": [
+        {
+            "name": "TownNews",
+            "email": "info@townnews.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}, 
+    "autoload": {
+        "psr-4": {
+            "Inc\\": "./inc"
+        }
+    }
+}
