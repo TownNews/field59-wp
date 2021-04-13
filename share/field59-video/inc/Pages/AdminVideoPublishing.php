@@ -70,10 +70,12 @@ class AdminVideoPublishing extends BaseController{
         'post_id' => intval( $_GET['post_id'] ),
       )
     );
+    
     wp_enqueue_script( 'field59-search-videos', plugins_url( 'scripts/media-upload-search.js', __FILE__ ), array( 'jquery' ));
 
     // Styles.
     wp_enqueue_style( 'field59-video-admin-media', plugins_url( 'styles/admin-media.css', __FILE__ ));
+   
 
     // Body Content.
     $GLOBALS['body_id'] = 'field59-video-media-library';
@@ -268,8 +270,10 @@ class AdminVideoPublishing extends BaseController{
 
     $error         = false;
     $error_details = '';
-    $body          = '';
-
+    /*$body          = '';
+    */
+    $login_unauthorized = 'Field59 email/username and password combination are incorrect. <a href="admin.php?page=field59_video_settings">Click here</a> to verify your login information.';
+    $login_failure = 'Field59 email/username and password must be set in the <a href="admin.php?page=field59_video_settings">Field59 Video Settings</a> in order to support video integration.';
     if (
       ! is_wp_error( $response )
       && is_array( $response )
@@ -279,28 +283,27 @@ class AdminVideoPublishing extends BaseController{
       } else {
         $error = true;
         if ( 401 === $response['response']['code'] ) {
-          $error_details = esc_attr__( 'Please verify username and password settings.', 'field59-video' );
+          echo 
+            '<div class="content"><p>'.$login_failure. '</p></div>';
+        }elseif ( 403 === $response['response']['code'] ) {
+          echo 
+            '<div class="content"><p>'.$login_unauthorized.'</p></div>';
         }
+
       }
     } else {
       $error = true;
     }
-
+    
     if ( $error ) {
       echo sprintf(
-        '<div class="content"><p>%s %s</p>',
-        esc_html( 'The service responded with an error.', 'field59-video' ),
+        '<div class="content"><p>%s <a href="https://www.field59.com/api-error-responses">Click Here</a>. %s</p>',
+        esc_html( 'For more information ', 'field59-video' ),
         esc_html( $error_details )
-      );
-      echo sprintf(
-        '<p style="text-align:center;"><small><em>%s %s - %s</em></small></p></div>',
-        esc_attr__( 'Error code', 'field59-video' ),
-        //esc_attr( $response['response']['code'] ),
-        esc_attr( $response['response']['message'] )
       );
       return;
     }
-
+    
     $videos = simplexml_load_string( $body, null, LIBXML_NOCDATA );
 
     /**
@@ -579,13 +582,12 @@ class AdminVideoPublishing extends BaseController{
     // Parse argments against default structure so all expected array keys are avaliable.
     $pg = wp_parse_args( $pagination, self::get_pagination_defaults() );
 
-    
     $table = Field59ListTable::get_instance();
     $table->set_pagination_args( $pg );
+
     echo sprintf( '<div class="tablenav %s">', esc_attr( $pg['position'] ) );
-    $table->print_pagination( $pg['position'] );
+      $table->print_pagination( $pg['position'] );
     echo '</div></div></div>';
-    
   }
 
   /**
@@ -599,12 +601,11 @@ class AdminVideoPublishing extends BaseController{
     self::display_pagination( $pagination );
     $html = ob_get_contents();
     ob_end_clean();
-
-    /**
-     * Pagination is generated using supar globals. Some of the output must
-     * be modified in order to use what's passed back to the client side
-     * through the admin ajax request.
-     */
+      /**
+       * Pagination is generated using supar globals. Some of the output must
+       * be modified in order to use what's passed back to the client side
+       * through the admin ajax request.
+       */
     $html = str_replace( '/wp-admin/admin-ajax.php', '/wp-admin/media-upload.php', $html );
     $html = str_replace( 'action=field59-search-videos', 'tab=field59', $html );
 

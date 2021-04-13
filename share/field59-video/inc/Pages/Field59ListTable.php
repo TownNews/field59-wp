@@ -3,11 +3,11 @@
  * @package Field59 Video
  */
 namespace Inc\Pages;
-/*
+
 use Inc\Api\SettingsApi;
 use Inc\Base\BaseController;
 use Inc\Api\AuthenticationApi;
-use Inc\Api\Callbacks\AdminCallbacks;*/
+use Inc\Api\Callbacks\AdminCallbacks;
 use \WP_List_Table;
 if ( ! defined( 'ABSPATH' ) ) {
 	die();
@@ -23,14 +23,14 @@ require_once (ABSPATH . '/wp-admin/includes/class-wp-list-table.php');
  */
 class Field59ListTable extends WP_List_Table {
     
-    
     public function __construct(){
-
-    add_action( 'wp', [$this,'get_instance'] ); 
-    //add_action( 'wp', [$this,'set_pagination_args'] ); 
-   
+		WP_List_Table::__construct([
+			'plural'   => 'video',
+			'singular' => 'videos',
+			'ajax'     => false,
+			'screen'   => null,
+		]);
     }
-    
 	/**
 	 * Handles initializing this class and returning the singleton instance after it's been cached.
 	 *
@@ -53,7 +53,6 @@ class Field59ListTable extends WP_List_Table {
 	 */
 	public function set_pagination_args( $args ) {
         $this->_pagination_args = $args;
-        
 	}
 	/**
 	 * Calls the protected method of the parent class to display the pagination HTML.

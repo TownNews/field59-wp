@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name:     Field59 Video Integration (Rebuild)
+ * Plugin Name:     Field59 Video Integration
  * Description:     Add Field59 videos to your posts and passes WordPress categories back to Field59 as tags for videos embedded into posts.
  * Author URI:      https://www.townnews.com
  * Version:         2021.02.01
