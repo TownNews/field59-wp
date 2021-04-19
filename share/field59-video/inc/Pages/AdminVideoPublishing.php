@@ -5,10 +5,11 @@
 namespace Inc\Pages;
 
 use Inc\Api\SettingsApi;
+use Inc\Base\Enqueue;
 use Inc\Base\BaseController;
 use Inc\Api\AuthenticationApi;
 use Inc\Pages\Field59ListTable;
-use Inc\Api\Callbacks\AdminCallbacks;
+use Inc\Api\CallBacks\AdminCallBacks;
 
 class AdminVideoPublishing extends BaseController{
 
@@ -34,49 +35,17 @@ class AdminVideoPublishing extends BaseController{
 			add_filter( 'field59_pagination_total', array( $this, 'approximate_total_count' ), 10, 3 );
 			add_filter( 'field59_pagination_total_pages', array( $this, 'approximate_total_pages' ), 10, 3 );
 
-			// Video publishing workflow - shortcode visualization.
-			add_filter( 'mce_external_plugins', array( $this, 'register_tinymce_javascript' ) );
-			add_action( 'print_media_templates', array( $this, 'video_shortcode_template' ) );
-			add_action( 'admin_init', array( $this, 'editor_styles' ) );
-
 			add_action( 'save_post', array( $this, 'video_embed_post_save' ), 11, 3 );
   }  
 
   public static function add_media_tab( $tabs ) {
-    // Check for setting from options page and if jw player already exists.
-    if ( true === get_field( 'is_jw_player_disabled', 'option' ) && array_key_exists( 'gtx_video', $tabs ) ) {
-      unset( $tabs['gtx_video'] ); // Remove jw player from tabs.
-    }
-
     $tabs['field59'] = __( 'Field59 Video', 'field59-video' );
 
     return $tabs;
   }
 
-  /**
-   * Enqueues script and styles and defined media library iframe callback.
-   *
-   * @return void
-   */
+
   public static function insert_media_video_iframe() {
-
-    // Scripts.
-    wp_register_script( 'field59-inline-embed-video', plugins_url( 'scripts/inline-embed-video.js', __FILE__ ), array( 'jquery' ));
-    wp_enqueue_script( 'field59-inline-embed-video' );
-    // Localize the script to pass PHP vars.
-    wp_localize_script(
-      'field59-inline-embed-video', 'f59_var',
-      array(
-        'post_id' => intval( $_GET['post_id'] ),
-      )
-    );
-    
-    wp_enqueue_script( 'field59-search-videos', plugins_url( 'scripts/media-upload-search.js', __FILE__ ), array( 'jquery' ));
-
-    // Styles.
-    wp_enqueue_style( 'field59-video-admin-media', plugins_url( 'styles/admin-media.css', __FILE__ ));
-   
-
     // Body Content.
     $GLOBALS['body_id'] = 'field59-video-media-library';
     wp_iframe( array( $this, 'field59_draw_media_video_page' ) );
@@ -92,7 +61,6 @@ class AdminVideoPublishing extends BaseController{
 
     // check if stream prop exists on response
     if ( array_key_exists( 'stream', $video ) ) {
-      // EX: https://player.field59.com/v4/live/gtxcel/1cd9c3bb2f3beabbc249470acfb21156699c4055
       $url 				= (string) "https://player.field59.com/v4/live/{$video->owner}/{$video->key}";
       $stream 			= (string) 'true';
     } else {
@@ -270,8 +238,7 @@ class AdminVideoPublishing extends BaseController{
 
     $error         = false;
     $error_details = '';
-    /*$body          = '';
-    */
+    
     $login_unauthorized = 'Field59 email/username and password combination are incorrect. <a href="admin.php?page=field59_video_settings">Click here</a> to verify your login information.';
     $login_failure = 'Field59 email/username and password must be set in the <a href="admin.php?page=field59_video_settings">Field59 Video Settings</a> in order to support video integration.';
     if (
@@ -469,7 +436,7 @@ class AdminVideoPublishing extends BaseController{
       'paged' => 1,
       'total_items' => 0,
       'total_pages' => 0,
-      'per_page' => 25,//self::DEFAULT_RESULTS_PER_PAGE,
+      'per_page' => 25,
       'count' => 0,
       'position' => 'top',
     );
@@ -477,8 +444,6 @@ class AdminVideoPublishing extends BaseController{
   }
 
   /**
-   * Undocumented function
-   *
    * @param int   $total_pages The number of pages availiable.
    * @param array $pagination  Structured list of pagination details.
    * @return int $total_pages
@@ -670,45 +635,6 @@ class AdminVideoPublishing extends BaseController{
    *
    * @return void
    */
-  public static function editor_styles() {
-    add_editor_style( plugins_url( 'styles/admin-editor.css?', __FILE__ ) );
-    add_editor_style( '//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css' );
-  }
-
-  /**
-   * Adds JS for use inside the editor.
-   *
-   * @param array $plugin_array List of TinyMCE external plugins.
-   * @return array $plugin_array
-   */
-  public static function register_tinymce_javascript( $plugin_array ) {
-    $plugin_array['field59_video'] = plugins_url( 'scripts/editor-visual-shortcodes.js?', __FILE__ );
-    return $plugin_array;
-  }
-
-  /**
-   * Outputs the shortcode visual element in the WordPress post/page editor.
-   *
-   * @return void
-   */
-  public function video_shortcode_template( $array ) {
-    ?>
-    <script type="text/html" id="tmpl-editor-field59-video">
-      <div class="field59_{{ data.vid }}"></div>
-      <div class="field59-editor-placeholder full_banner" id="field59_mce_{{ data.vid }}">
-        <span class="thumb">
-          <# if(data.thumb) { #>
-            <img src="{{ data.thumb }}" style="height: 100px; width: auto;">
-            <# } #>
-        </span>
-        <# if(data.vtitle) { #>
-          <p class="title">{{ data.vtitle }}</p>
-        <# } #>
-      </div>
-    </script>
-
-    <?php
-  }
 
   /**
    * Function associated with calls to the admin ajax action 'field59-import-thumbnail'.
@@ -884,7 +810,7 @@ class AdminVideoPublishing extends BaseController{
     wp_update_attachment_metadata( $attach_id, $attach_data );
 
     // Add metadata for duplicate matching and import debugging/tracability.
-    update_post_meta( $attach_id, '_import_by', 'field59-video plugin v/' . FIELD59_VIDEO_VERSION );
+    update_post_meta( $attach_id, '_import_by', 'field59-video plugin v/');
     update_post_meta( $attach_id, '_import_origin', $image_url );
     update_post_meta( $attach_id, '_import_field59_account', $account );
     update_post_meta( $attach_id, '_import_field59_video_key', $key );
@@ -914,8 +840,6 @@ class AdminVideoPublishing extends BaseController{
     );
     wp_die();
   }
-
-
   /**
    * Function associated with calls to the admin ajax action 'field59-search-videos'.
    *
@@ -923,7 +847,135 @@ class AdminVideoPublishing extends BaseController{
    * to replace the displays on the page.
    *
    * @return void
+   */
+  public function ajax_search_videos() {
+			$search_term = sanitize_text_field( wp_unslash( $_GET['s'] ) );
+			
+			$search_type = sanitize_text_field( wp_unslash( $_GET['type'] ) );
+			$search_type = ! empty( $_GET['type'] ) ? sanitize_text_field( $_GET['type'] ) : 'video';
+			$paged       = isset( $_GET['paged'] ) ? absint( sanitize_text_field( $_GET['paged'] ) ) : 1;
 
+			$pagination = array(
+				'paged'        => max( 1, $paged ),
+			);
+
+			// Parse argments against default structure so all expected array keys are avaliable.
+			$pagination = wp_parse_args( $pagination, self::get_pagination_defaults() );
+
+			$pagination['offset'] = ( $pagination['paged'] - 1 ) * $pagination['per_page'];
+
+			$search_params = array(
+				'sorting' => 'date', // API default; explicitly set.
+				'skip'    => $pagination['offset'],
+				'type'    => $search_type,
+			);
+
+			if ( ! empty( $search_term ) ) {
+				$search_params['terms']   = $search_term;
+				$search_params['sorting'] = 'relevance';
+				$search_params['limit']   = 50;
+				$search_params['skip']    = 0;
+			}
+			$response = AuthenticationApi::make_field59_api_call( 'https://api.field59.com/v2/search', 'GET', $search_params);
+			$f59_user = get_option( 'field59_username', 'option' );
+      $f59_pass = get_option( 'field59_password', 'option' );
+		
+			if (
+				! is_wp_error( $response )
+				&& is_array( $response )
+			) {
+				if ( 200 === $response['response']['code'] ) {
+					$body = $response['body'];
+				} else {
+					$error = true;
+					if ( 401 === $response['response']['code'] ) {
+						$error_details = esc_attr__( 'Please verify username and password settings.', 'field59-video' );
+					}
+				}
+			} else {
+				$error = true;
+			}
+
+			if ( $error ) {
+
+				if ( ! isset( $error_details ) ) {
+					$error_details = $response['response']['message'];
+				}
+
+				$tbody = sprintf(
+					'<tr><td colspan="6">%s: <pre>%s</pre></td></tr>',
+					esc_html( 'The service responded with an errors', 'field59-video' ),
+					$error_details
+				);
+				wp_send_json_error(
+					array(
+						'code'              => $response['response']['code'],
+						'error_message'     => $response['response']['message'],
+						'tbody'             => $tbody,
+						'pagination_top'    => '',
+						'pagination_bottom' => '',
+					)
+				);
+				wp_die();
+			}
+
+			
+
+			$videos      = simplexml_load_string( $body, null, LIBXML_NOCDATA );
+			$video_count = count( $videos->$search_type );
+			$total       = 0;
+			$total_pages = 0;
+
+			if ( $video_count ) {
+				$tbody = '';
+
+				foreach ( $videos->$search_type as $video ) {
+					$tbody .= self::draw_media_video_row( $video );
+				}
+			} else {
+				if ( ! empty( $search_term ) ) {
+					$tbody = sprintf(
+						'<tr><td colspan="5">%s “%s”</td></tr>',
+						esc_html__( 'There are no videos to display for search term', 'field59-video' ),
+						$search_term
+					);
+				} else {
+					$tbody = sprintf( '<tr><td colspan="5">%s</td></tr>', esc_html__( 'There are no videos to display Sorry.', 'field59-video' ) );
+				}
+			}
+
+			$subtitle = self::get_page_subtitle();
+
+			$pagination['count'] = $video_count;
+
+			if ( ! empty( $search_term ) ) {
+				$pagination['total_items'] = $video_count;
+				$pagination['total_pages'] = 1;
+			} else {
+				$pagination['total_items'] = apply_filters( 'field59_pagination_total', $total, $pagination, $videos );
+
+				$pagination['total_pages'] = apply_filters( 'field59_pagination_total_pages', $total_pages, $pagination, $videos );
+			}
+			$pg_display_top = self::get_display_pagination( $pagination );
+
+			$pagination['position'] = 'bottom';
+			$pg_display_bot         = self::get_display_pagination( $pagination );
+
+			// Build response.
+			$output = array(
+				'tbody' => $tbody,
+				'subtitle' => $subtitle,
+				'pagination_top' => $pg_display_top,
+				'pagination_bottom' => $pg_display_bot,
+			);
+			wp_send_json(
+				array(
+					'success' => true,
+					'result' => $output,
+				)
+			);
+			wp_die();
+		}
 
   /**
    * Creates and adds a Field59 media taxonomy to an attachment.

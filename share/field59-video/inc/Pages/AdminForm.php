@@ -5,35 +5,28 @@
 namespace Inc\Pages;
 
 use Inc\Api\SettingsApi;
-use Inc\Base\BaseController;
-use Inc\Api\Callbacks\AdminCallbacks;
+use Inc\Api\CallBacks\AdminCallBacks;
 
-class AdminForm extends BaseController{
+class AdminForm {
 	
 	public function register(){
 		add_action('admin_init', array($this, 'registerSettings'));
 		add_action('admin_init', array($this,'addSection'));
 		add_action('admin_init', array($this,'addSettingsFields'));
+		$this->callbacks = new AdminCallBacks();
 	}
-    
-    /*public static function runHook(): void {
-		$instance = new static();
-		$instance->addSection();
-		$instance->registerSettings();
-		$instance->addSettingsFields();
-	}*/
 
     public function addSection(){
 		add_settings_section(
 			'field59_login_credentials',
 			'Field59 Login Information', 
-			array($this,'sectionCallback'),
+			array($this->callbacks,'sectionCallback'),
 			'field59_video_settings'
         );
         add_settings_section(
 			'field59_options',
-			'Field59 Options', false,
-			//array($this,'sectionCallback'), 
+			'Field59 Options', 
+			false,
 			'field59_video_settings'
 		);
     }
@@ -42,21 +35,21 @@ class AdminForm extends BaseController{
 		add_settings_field(
 			'field59_username',
 			'Email/Username',
-			array($this,'field59UsernameCallback'),
+			array($this->callbacks,'field59UsernameCallback'),
 			'field59_video_settings',
 			'field59_login_credentials'
 		);
 		add_settings_field(
 			'field59_password',
 			'Field59 Password',
-			array($this,'field59PasswordCallback'),
+			array($this->callbacks,'field59PasswordCallback'),
 			'field59_video_settings',
 			'field59_login_credentials'
         );
         add_settings_field(
 			'field59_owner_override',
 			'Field59 Owner Override',
-			array($this,'field59OwnerOverrideCallback'),
+			array($this->callbacks,'field59OwnerOverrideCallback'),
 			'field59_video_settings',
 			'field59_options'
 		);
@@ -80,25 +73,7 @@ class AdminForm extends BaseController{
 		));
     }
     
-    public function sectionCallback(){
-		echo '<p>Don\'t have an account?<a href="https://www.field59.com/"> Click here</a> for more information.</p>';
-		
-    }
     
-    public function field59UsernameCallback(){
-		
-		echo '<input name="field59_username" title="Field59 Email/Username"  id="field59_username" type="text" value="'.esc_attr(get_option('field59_username')).'" />';
-	}
-
-	public function field59PasswordCallback(){
-       
-		echo '<input name="field59_password" title="Field59 Password" autocomplete="off" id="field59_password" type="password" value="'.esc_attr(get_option('field59_password')).'" />';
-	}
-
-    public function field59OwnerOverrideCallback(){
-       
-		echo '<input name="field59_owner_override" title="Field59 Owner Override" id="field59_owner_override" type="text" value="'.esc_attr(get_option('field59_owner_override')).'" />';
-	}
 
 	public static function deleteSettings(){
 		$options = array(

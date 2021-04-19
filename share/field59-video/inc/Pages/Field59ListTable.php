@@ -4,11 +4,8 @@
  */
 namespace Inc\Pages;
 
-use Inc\Api\SettingsApi;
-use Inc\Base\BaseController;
-use Inc\Api\AuthenticationApi;
-use Inc\Api\Callbacks\AdminCallbacks;
 use \WP_List_Table;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	die();
 }

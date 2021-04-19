@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name:     Field59 Video Integration
+ * Plugin Name:     Field59 Video Integration (Rebuild)
  * Description:     Add Field59 videos to your posts and passes WordPress categories back to Field59 as tags for videos embedded into posts.
  * Author URI:      https://www.townnews.com
  * Version:         2021.02.01
@@ -11,9 +11,8 @@
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	die();
+	die('Hey, you can\'t access this file, human!');
 }
-defined( 'ABSPATH') or die( 'Hey, you can\t access this file, human!');
 
 // Require once the Composer Autoload
 if( file_exists(dirname(__FILE__). '/vendor/autoload.php')){
@@ -27,6 +26,15 @@ function activate_field59_video_plugin() {
 	Inc\Base\Activate::activate();
 }
 register_activation_hook( __FILE__, 'activate_field59_video_plugin' );
+
+/**
+ * The code that displays custom admin notice
+ */
+function activation_notice(){
+	Inc\Pages\AdminNotices::field59_admin_activation_notice_hook();
+}
+register_activation_hook( __FILE__, 'activation_notice' );
+
 /**
  * The code that runs during plugin deactivation
  */

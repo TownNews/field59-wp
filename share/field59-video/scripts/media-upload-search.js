@@ -1,11 +1,11 @@
 (function ($) {
 	$(document).ready(function () {
-		$('body').on('click', '#field59-video-filter .search-box #search-submit', searchF59);
-		$('body').on('click', '#field59-video-filter .f59-header .f59-type button', searchF59);
+		$('body').on('click', '#field59-video-filter .search-box #search-submit','search', searchF59);
+		$('body').on('click', '#field59-video-filter .f59-header .f59-type button','tab', searchF59);
 
 		function searchF59(e) {
 			e.preventDefault();
-			// e.stopImmediatePropagation();
+			
 			var $searchbox = $('.search-box');
 			var $form = $searchbox.closest('form');
 			var $spinner = $searchbox.find('.spinner');
@@ -15,17 +15,25 @@
 			var $pages_bot = $('.content .tablenav.bottom');
 			var $typeBtns = $('#field59-video-filter .f59-header .f59-type button');
 
+			var type;
+            if (e.data === 'tab') {
+                type = String($(this).attr('id'));
+            } else if (e.data === 'search') {
+                type = String($(this).closest('.f59-header').find('.f59-type button.active').attr('id'));
+            }
+
 			// Interactive UI.
-			$typeBtns.removeClass('active');
-			$(this).addClass('active');
-			$spinner.addClass('is-active');
+			if (e.data === 'tab') {
+                $typeBtns.removeClass('active');
+                $(this).addClass('active');
+            }
 
 			// Collect params to pass to video search AJAX request.
 			ajax_params = {
 				action: 'field59-search-videos',
 			};
 			var fields = $form.find(':input').serialize();
-			fields += '&type=' + String($(this).attr('id'));
+			fields += '&type=' + type;
 			ajax_params = fields + '&' + $.param(ajax_params);
 
 			console.log('ajax_params: ', ajax_params);

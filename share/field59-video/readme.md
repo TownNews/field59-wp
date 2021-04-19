@@ -5,7 +5,7 @@
 	- [Development Instructions](#development-instructions)
 		- [Compiling CSS](#compiling-css)
 
-A WordPress integration for Field59 videos.
+A WordPress integration for Field59 videos, designed specifically for the Rayos platform.
 
 ## Dependencies
 

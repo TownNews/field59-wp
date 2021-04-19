@@ -7,23 +7,19 @@ namespace Inc\Pages;
 
 use Inc\Api\SettingsApi;
 use Inc\Base\BaseController;
-use Inc\Api\Callbacks\AdminCallbacks;
+use Inc\Api\CallBacks\AdminCallBacks;
 
 
-  class Admin extends BaseController
-  {
+  class Admin extends BaseController {
 			public $settings;
-
 			public $callbacks;
-			
 			public $subpages = array();
 
 
 		public function register() {
 			$this->settings = new SettingsApi();
 
-			$this->callbacks = new AdminCallbacks();
-
+			$this->callbacks = new AdminCallBacks();
 
 			$this->setSubpages();
 

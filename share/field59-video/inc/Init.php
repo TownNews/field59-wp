@@ -17,7 +17,6 @@
 			Pages\Admin::class,
 			Pages\AdminForm::class,
 			Pages\AdminNotices::class,
-			Pages\Field59ListTable::class,
 			Pages\AdminVideoPublishing::class,
       		Base\Enqueue::class,
 			Base\SettingsLinks::class,
